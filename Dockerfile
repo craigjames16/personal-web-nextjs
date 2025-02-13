@@ -30,18 +30,8 @@ RUN npm run build;
 FROM base AS runner
 WORKDIR /app
 
-# Define build arguments
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-ARG GOOGLE_TOKEN
-ARG OPENAI_API_KEY
-
 # Set environment variables from arguments
 ENV NODE_ENV=production
-ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-ENV GOOGLE_TOKEN=${GOOGLE_TOKEN}
-ENV OPENAI_API_KEY=${OPENAI_API_KEY}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
