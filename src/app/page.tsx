@@ -1,7 +1,7 @@
 'use client'
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { ChatBubble, ChatBubbleMessage } from "../components/ui/chat-bubble";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { MessageLoading } from "@/components/ui/message-loading";
 import { Typewriter } from "@/components/ui/typewriter-text";
@@ -127,6 +127,14 @@ export default function Home() {
     window.open('/resume.pdf', '_blank');
   };
 
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [storedMessages]);
+
   return (
     <div>
       <div className="absolute top-4 right-4 z-10">
@@ -149,11 +157,10 @@ export default function Home() {
           deleteSpeed={35}
           delay={4000}
           loop={false}
-          className={`text-4xl font-medium ${isDarkTheme ? 'white-text' : ''} mb-4`}
+          className={`text-4xl text-center font-medium ${isDarkTheme ? 'white-text' : ''} mb-4`}
       />}
       {storedMessages.length > 0 && (
-        <div className={`max-w-lg min-w-[500px] flex flex-col h-[calc(100vh-200px)] overflow-auto`}>
-          <div className="flex-grow overflow-y-auto space-y-4 p-4 flex flex-col justify-end">
+        <div ref={messageContainerRef} className={`max-w-lg min-w-[300px] h-[calc(100vh-200px)] message-container space-y-4 p-4`}>
             {storedMessages.map((msg: { type: string; text: string }, index: number) => (
               <ChatBubble key={index} variant={msg.type as "sent" | "received"}>
                 <ChatBubbleMessage variant={msg.type as "sent" | "received"} isDarkTheme={isDarkTheme}>
@@ -162,7 +169,6 @@ export default function Home() {
               </ChatBubble>
             ))}
             {isLoading && <MessageLoading isDarkTheme={isDarkTheme} />}
-          </div>
         </div>
       )}
       <PlaceholdersAndVanishInput
