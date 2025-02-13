@@ -30,8 +30,13 @@ RUN npm run build;
 FROM base AS runner
 WORKDIR /app
 
+ARG OPENAI_API_KEY
+ARG GOOGLE_TOKEN
+
 # Set environment variables from arguments
 ENV NODE_ENV=production
+ENV OPENAI_API_KEY=${OPENAI_API_KEY}
+ENV GOOGLE_TOKEN=${GOOGLE_TOKEN}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
