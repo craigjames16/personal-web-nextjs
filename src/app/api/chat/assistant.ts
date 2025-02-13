@@ -16,22 +16,34 @@ class PersonalWebsiteAssistant {
 
   private async initializeAssistant() {
     console.log("Initializing assistant");
-    const todays_date = new Date().toISOString();
-    await openai.beta.assistants.update(
-      "asst_fybac2gkaMejjj1ILGAXCnnV",
-      {
-        instructions:
-          `You are a personal assistant for Craig Chisholm.
-          You will help users that come to Craig's personal website perform
-          tasks and answer questions for them. Questions should mostly be about
-          Craig or his experience. Today's date is ${todays_date}. Craig's contact information is Email: chisholm.craig@gmail.com,
-          Phone: 604-935-4855, LinkedIN: https://www.linkedin.com/in/craigchisholm/.`,
-      }
-    );
+    try {
+      const todays_date = new Date().toISOString();
+      await openai.beta.assistants.update(
+        "asst_fybac2gkaMejjj1ILGAXCnnV",
+        {
+          instructions:
+            `You are a personal assistant for Craig Chisholm.
+            You will help users that come to Craig's personal website perform
+            tasks and answer questions for them. Questions should mostly be about
+            Craig or his experience. Today's date is ${todays_date}. Craig's contact information is Email: chisholm.craig@gmail.com,
+            Phone: 604-935-4855, LinkedIN: https://www.linkedin.com/in/craigchisholm/.`,
+        }
+      );
 
-    PersonalWebsiteAssistant.assistant = await openai.beta.assistants.retrieve(
-      "asst_fybac2gkaMejjj1ILGAXCnnV"
-    );
+      PersonalWebsiteAssistant.assistant = await openai.beta.assistants.retrieve(
+        "asst_fybac2gkaMejjj1ILGAXCnnV"
+      );
+
+      // Check if the assistant was successfully retrieved
+      if (!PersonalWebsiteAssistant.assistant) {
+        console.error("Failed to initialize assistant: Assistant is undefined.");
+      }
+
+    } catch (error) {
+      console.error("Error initializing assistant:", error);
+      throw error;
+    }
+    console.log("Assistant initialized successfully");
   }
 
   public async createThread() {
