@@ -1,101 +1,177 @@
-import Image from "next/image";
+'use client'
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
+import { ChatBubble, ChatBubbleMessage } from "../components/ui/chat-bubble";
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { MessageLoading } from "@/components/ui/message-loading";
+import { Typewriter } from "@/components/ui/typewriter-text";
+import { SparklesCore } from "@/components/ui/Sparkles";
+import { SunIcon, DocumentIcon } from '@heroicons/react/24/outline';
+
+const ResumeLink = ({ isVisible, isDarkTheme, onResumeClick }: { isVisible: boolean, isDarkTheme: boolean, onResumeClick: () => void }) => {
+  if (!isVisible) return null; // Don't render if not visible
+
+  return (
+    <div onClick={onResumeClick} className={`fade-in cursor-pointer absolute top-4 ${isDarkTheme ? 'dark:bg-background' : 'bg-muted'} left-4 p-2 rounded-md`}>
+      <div className="relative">
+        <img src="/resume_thumbnail.png" alt="Resume" className="w-[200px] h-[250px]" />
+        <DocumentIcon className="absolute inset-0 m-auto w-16 h-16 opacity-75" />
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [storedMessages, setStoredMessages] = useState(() => {
+    // Check if localStorage is available
+    if (typeof window !== 'undefined') {
+      // Initialize state with messages from local storage
+      return JSON.parse(localStorage.getItem('chatMessages') || '[]');
+    }
+    return []; // Return an empty array if localStorage is not available
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const [showResume, setShowResume] = useState(false);
+
+  const placeholders = [
+    "How can I contact Craig?",
+    "What is Craig's availability next week?",
+    "What can I do on this website?",
+    "Send an email to Craig",
+    "Schedule a meeting with Craig",
+    "Show me Craig's resume",
+  ];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const input = e.currentTarget.querySelector('input') as HTMLInputElement;
+    const message = input.value;
+
+    // Store the sent message in local storage
+    const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+    messages.push({ type: 'sent', text: message });
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+    
+    // Update state to trigger re-render
+    setStoredMessages([...messages]);
+    const threadId = localStorage.getItem('threadId');
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message, threadId }),
+      });
+
+      const data = await response.json();
+
+      if (data.action === "showResume") {
+        console.log("Showing resume");
+        setShowResume(true);
+      }
+
+      // Store the received message in local storage
+      messages.push({ type: 'received', text: data.response });
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+      localStorage.setItem('threadId', data.threadId);
+
+      // Update state to trigger re-render with the new message
+      setStoredMessages([...messages]);
+    } catch (error) {
+      console.error('Error calling chat API:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // useEffect to update messages when the component mounts
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+      setStoredMessages(messages);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkTheme(prev => !prev);
+  };
+
+  useEffect(() => {
+    document.body.classList.toggle('dark', isDarkTheme);
+  }, [isDarkTheme]);
+
+  useEffect(() => {
+    // Set visibility to true after the component mounts
+    const timer = setTimeout(() => setIsVisible(true), 100); // Delay for fade-in effect
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleResumeClick = () => {
+    setShowResume(false);
+    window.open('/resume.pdf', '_blank');
+  };
+
+  return (
+    <div>
+      <div className="absolute top-4 right-4 z-10">
+        <button onClick={toggleTheme} className="cursor-pointer">
+          <SunIcon className={`w-6 h-6 ${isDarkTheme ? 'text-white' : 'text-black'}`} />
+        </button>
+      </div>
+      <SparklesCore
+          background={isDarkTheme ? "#171717" : "#FFFFFF"}
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={80}
+          className="absolute inset-0 w-full h-full z-[-1]"
+          particleColor={isDarkTheme ? "#FFFFFF" : "#000000"}
+        />
+    <div className={`flex flex-col justify-center items-center px-4 h-screen ${isVisible ? 'fade-in' : 'opacity-0'}`}>
+      {storedMessages.length === 0 && <Typewriter
+          text={["Welcome.", "I am Craig's AI assistant.", "How can I help you?"]}
+          speed={70}
+          deleteSpeed={35}
+          delay={4000}
+          loop={false}
+          className={`text-4xl font-medium ${isDarkTheme ? 'white-text' : ''} mb-4`}
+      />}
+      {storedMessages.length > 0 && (
+        <div className={`max-w-lg min-w-[500px] flex flex-col h-[calc(100vh-200px)] overflow-auto`}>
+          <div className="flex-grow overflow-y-auto space-y-4 p-4 flex flex-col justify-end">
+            {storedMessages.map((msg: { type: string; text: string }, index: number) => (
+              <ChatBubble key={index} variant={msg.type as "sent" | "received"}>
+                <ChatBubbleMessage variant={msg.type as "sent" | "received"} isDarkTheme={isDarkTheme}>
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                </ChatBubbleMessage>
+              </ChatBubble>
+            ))}
+            {isLoading && <MessageLoading isDarkTheme={isDarkTheme} />}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      <PlaceholdersAndVanishInput
+        placeholders={placeholders}
+        onChange={handleChange}
+        onSubmit={onSubmit}
+      />
+      <ResumeLink isVisible={showResume} isDarkTheme={isDarkTheme} onResumeClick={handleResumeClick} />
+    </div>
     </div>
   );
 }

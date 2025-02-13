@@ -2,20 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --radius: 0.5rem;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --primary: #007bff; /* Example color */
+  --primary-foreground: #ffffff; /* Example color */
+  --muted: #f0f0f0; /* Example color */
+  --circle-color-light: black;
+  --circle-color-dark: white;
+  --background: #ffffff;
+}
+
+.dark {
+  --primary: #007bff; /* Dark background color */
+  --primary-foreground: #ffffff; /* Light text color */
+  --muted: #575757; /* Dark muted color */
+  --background: #262626;
+  background-color: #262626;
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+.dark .bg-primary {
+  background-color: var(--muted); /* Change this to your desired dark theme color */
+}
+
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+.bg-muted {
+  background-color: var(--muted);
+}
+
+a {
+  color: var(--primary); /* Change this to your desired color */
+  text-decoration: none; /* Optional: remove underline */
+}
+
+a:hover {
+  color: "black"; /* Change this to your desired hover color */
+}
+
+.bg-primary-dark {
+  background-color: #007bff; /* Replace with your desired dark primary color */
+  color: #ffffff; /* Replace with your desired text color for dark theme */
+}
+
+.bg-muted-dark {
+  background-color: #333333; /* Replace with your desired muted dark color */
+  color: #cccccc; /* Replace with your desired text color for muted dark */
+}
+
+.white-text {
+  color: #ffffff;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 2s ease-in; /* Adjust duration and easing as needed */
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
