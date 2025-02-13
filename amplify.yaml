@@ -1,5 +1,5 @@
 version: 1
-app:
+frontend:
   environment:
     OPENAI_API_KEY: $OPENAI_API_KEY
     GOOGLE_TOKEN: $GOOGLE_TOKEN
