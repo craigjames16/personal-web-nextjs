@@ -3,7 +3,7 @@
 # Variables
 AWS_REGION="ca-central-1"  # e.g., us-east-1
 ECR_REPO_NAME="personal-web"  # e.g., my-nextjs-app
-IMAGE_TAG="latest"  # You can change this to a specific version if needed
+IMAGE_TAG="1.0.0"  # You can change this to a specific version if needed
 AWS_ACCOUNT_ID="182491688958"  # Replace with your actual AWS account ID
 OPENAI_API_KEY="sk-proj-123"  # Add your OpenAI API key here
 
@@ -13,7 +13,7 @@ aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --
 
 # Build the Docker image
 echo "Building the Docker image..."
-docker build --build-arg OPENAI_API_KEY=$OPENAI_API_KEY -t $ECR_REPO_NAME .
+docker build --platform=linux/amd64 --build-arg OPENAI_API_KEY=$OPENAI_API_KEY -t $ECR_REPO_NAME .
 
 # Tag the Docker image
 echo "Tagging the Docker image..."

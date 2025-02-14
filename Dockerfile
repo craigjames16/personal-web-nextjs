@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:18-alpine AS base
+FROM --platform=linux/amd64 node:18-alpine AS base
 
 ARG OPENAI_API_KEY
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -32,11 +32,15 @@ WORKDIR /app
 
 ARG OPENAI_API_KEY
 ARG GOOGLE_TOKEN
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
 
 # Set environment variables from arguments
 ENV NODE_ENV=production
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}
 ENV GOOGLE_TOKEN=${GOOGLE_TOKEN}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -47,9 +51,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 3003
+EXPOSE 3000
 
-ENV PORT=3003
+ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 RUN ls -la
