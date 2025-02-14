@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { sendEmail } from './emailTools';
 import { scheduleMeeting, getFreeBusy } from './googleTools';
 import { getWorkExperience } from './infoTools';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -22,7 +23,7 @@ class PersonalWebsiteAssistant {
         "asst_fybac2gkaMejjj1ILGAXCnnV",
         {
           instructions:
-            `You are a personal assistant for Craig Chisholm.
+           `You are a personal assistant for Craig Chisholm.
             You will help users that come to Craig's personal website perform
             tasks and answer questions for them. Questions should mostly be about
             Craig or his experience. Today's date is ${todays_date}. Craig's contact information is Email: chisholm.craig@gmail.com,
@@ -111,17 +112,22 @@ class PersonalWebsiteAssistant {
       const toolOutputs = await Promise.all(run.required_action.submit_tool_outputs.tool_calls.map(
         async (tool: any) => {
           let output;
-          if (tool.function.name === "sendEmail") {
-            output = await sendEmail(tool.function.arguments);
-          } else if (tool.function.name === "scheduleMeeting") {
-            output = await scheduleMeeting(tool.function.arguments);
-          } else if (tool.function.name === "getFreeBusy") {
-            output = await getFreeBusy(tool.function.arguments);
-          } else if (tool.function.name === "getWorkExperience") {
-            output = getWorkExperience();
-          } else if (tool.function.name === "showCraigResume") {
-            output = "Yes we can show the resume. Tell them you've opened the Resume in the top left corner.";
-            frontEndAction = "showResume";
+          try {
+            if (tool.function.name === "sendEmail") {
+              output = await sendEmail(tool.function.arguments);
+            } else if (tool.function.name === "scheduleMeeting") {
+              output = await scheduleMeeting(tool.function.arguments);
+            } else if (tool.function.name === "getFreeBusy") {
+              output = await getFreeBusy(tool.function.arguments);
+            } else if (tool.function.name === "getWorkExperience") {
+              output = getWorkExperience();
+            } else if (tool.function.name === "showCraigResume") {
+              output = "Yes we can show the resume. Tell them you've opened the Resume in the top left corner.";
+              frontEndAction = "showResume";
+            }
+          } catch (error: any) {
+            console.error(`Error processing tool ${tool.function.name}:`, error);
+            output = `Error processing tool: ${error.message}`;
           }
           return {
             tool_call_id: tool.id,
