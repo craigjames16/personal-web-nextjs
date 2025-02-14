@@ -3,7 +3,7 @@
 # Variables
 AWS_REGION="ca-central-1"  # e.g., us-east-1
 ECR_REPO_NAME="personal-web"  # e.g., my-nextjs-app
-IMAGE_TAG="1.0.0"  # You can change this to a specific version if needed
+IMAGE_TAG="1.0.1"  # You can change this to a specific version if needed
 AWS_ACCOUNT_ID="182491688958"  # Replace with your actual AWS account ID
 OPENAI_API_KEY="sk-proj-123"  # Add your OpenAI API key here
 

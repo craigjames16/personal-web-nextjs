@@ -1,7 +1,7 @@
 {
-  "AWSEBDockerrunVersion": 1,
+  "AWSEBDockerrunVersion": 3,
   "Image": {
-    "Name": "182491688958.dkr.ecr.ca-central-1.amazonaws.com/personal-web:1.0.0",
+    "Name": "182491688958.dkr.ecr.ca-central-1.amazonaws.com/personal-web:1.0.1",
     "Update": "true"
   },
   "Ports": [
