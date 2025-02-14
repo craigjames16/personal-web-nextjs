@@ -1,5 +1,5 @@
 {
-  "AWSEBDockerrunVersion": 3,
+  "AWSEBDockerrunVersion": 1,
   "Image": {
     "Name": "182491688958.dkr.ecr.ca-central-1.amazonaws.com/personal-web:1.0.1",
     "Update": "true"
