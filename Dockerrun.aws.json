@@ -1,12 +1,16 @@
 {
-  "AWSEBDockerrunVersion": 1,
-  "Image": {
-    "Name": "182491688958.dkr.ecr.ca-central-1.amazonaws.com/personal-web:1.0.1",
-    "Update": "true"
-  },
-  "Ports": [
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
     {
-      "ContainerPort": 3000
+      "name": "web",
+      "image": "182491688958.dkr.ecr.ca-central-1.amazonaws.com/personal-web:1.0.1",
+      "essential": true,
+      "memory": 1024,
+      "portMappings": [
+        {
+          "containerPort": 3000
+        }
+      ]
     }
   ]
 }
