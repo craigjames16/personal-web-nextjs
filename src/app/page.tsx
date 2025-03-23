@@ -176,7 +176,11 @@ export default function Home() {
             {storedMessages.map((msg: { type: string; text: string }, index: number) => (
               <ChatBubble key={index} variant={msg.type as "sent" | "received"}>
                 <ChatBubbleMessage variant={msg.type as "sent" | "received"} isDarkTheme={isDarkTheme}>
-                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                  <ReactMarkdown components={{
+                    p: ({node, ...props}) => <p className="whitespace-pre-line" {...props} />
+                  }}>
+                    {msg.text}
+                  </ReactMarkdown>
                 </ChatBubbleMessage>
               </ChatBubble>
             ))}
