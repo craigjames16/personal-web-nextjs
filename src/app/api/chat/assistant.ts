@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { sendEmail } from './emailTools';
+import { leaveMessage } from './emailTools';
 import { scheduleMeeting, getFreeBusy } from './googleTools';
 import { getWorkExperience } from './infoTools';
 
@@ -28,6 +28,7 @@ class PersonalWebsiteAssistant {
             tasks and answer questions for them. Questions should mostly be about
             Craig or his experience. Today's date is ${todays_date}. Craig's contact information is Email: chisholm.craig@gmail.com,
             Phone: 604-935-4855, LinkedIN: https://www.linkedin.com/in/craigchisholm/.`,
+            model: "o3-mini"
         }
       );
 
@@ -113,8 +114,8 @@ class PersonalWebsiteAssistant {
         async (tool: any) => {
           let output;
           try {
-            if (tool.function.name === "sendEmail") {
-              output = await sendEmail(tool.function.arguments);
+            if (tool.function.name === "leaveMessage") {
+              output = await leaveMessage(tool.function.arguments);
             } else if (tool.function.name === "scheduleMeeting") {
               output = await scheduleMeeting(tool.function.arguments);
             } else if (tool.function.name === "getFreeBusy") {

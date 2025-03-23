@@ -40,7 +40,7 @@ export default function Home() {
     "How can I contact Craig?",
     "What is Craig's availability next week?",
     "What can I do on this website?",
-    "Send an email to Craig",
+    "Leave a message for Craig",
     "Schedule a meeting with Craig",
     "Show me Craig's resume",
   ];
@@ -160,7 +160,7 @@ export default function Home() {
           className={`text-4xl text-center font-medium ${isDarkTheme ? 'white-text' : ''} mb-4`}
       />}
       {storedMessages.length > 0 && (
-        <div ref={messageContainerRef} className={`max-w-lg min-w-[300px] h-[calc(100vh-200px)] message-container space-y-4 p-4`}>
+        <div ref={messageContainerRef} className={`max-w-xl w-full min-w-[400px] h-[calc(100vh-200px)] message-container space-y-4 p-4`}>
             {storedMessages.map((msg: { type: string; text: string }, index: number) => (
               <ChatBubble key={index} variant={msg.type as "sent" | "received"}>
                 <ChatBubbleMessage variant={msg.type as "sent" | "received"} isDarkTheme={isDarkTheme}>

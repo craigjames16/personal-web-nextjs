@@ -1,10 +1,10 @@
 import * as AWS from 'aws-sdk';
 
-export const sendEmail = async (emailArgs: any): Promise<String> => {
+export const leaveMessage = async (emailArgs: any): Promise<String> => {
     console.log("Sending email");
     const SENDER = "chisholm.craig@gmail.com";
     const RECIPIENT = "chisholm.craig@gmail.com";
-    const { sender,subject, body } = JSON.parse(emailArgs);
+    const { sender, contactInfo, body } = JSON.parse(emailArgs);
 
     try {
       AWS.config.update({ 
@@ -23,12 +23,12 @@ export const sendEmail = async (emailArgs: any): Promise<String> => {
               Body: {
                   Text: {
                       Charset: "UTF-8",
-                      Data: body + "\n\n" + sender,
+                      Data: body + "\n\n" + sender + "\n" + contactInfo,
                   },
               },
               Subject: {
                   Charset: "UTF-8",
-                  Data: subject,
+                  Data: "Craig Chisholm - Personal Website Message",
               },
           },
           Source: SENDER,
