@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import { MessageLoading } from "@/components/ui/message-loading";
 import { Typewriter } from "@/components/ui/typewriter-text";
 import { SparklesCore } from "@/components/ui/Sparkles";
-import { SunIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { SunIcon, DocumentIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 
 const ResumeLink = ({ isVisible, isDarkTheme, onResumeClick }: { isVisible: boolean, isDarkTheme: boolean, onResumeClick: () => void }) => {
   if (!isVisible) return null; // Don't render if not visible
@@ -135,11 +135,23 @@ export default function Home() {
     }
   }, [storedMessages]);
 
+  const clearChat = () => {
+    localStorage.removeItem('threadId');
+    localStorage.removeItem('chatMessages');
+    setStoredMessages([]);
+    setShowResume(false);
+  };
+
   return (
     <div>
       <div className="absolute top-4 right-4 z-10">
         <button onClick={toggleTheme} className="cursor-pointer">
           <SunIcon className={`w-6 h-6 ${isDarkTheme ? 'text-white' : 'text-black'}`} />
+        </button>
+      </div>
+      <div className="absolute top-4 left-4 z-10">
+        <button onClick={clearChat} className="cursor-pointer" title="Start new chat">
+          <PencilSquareIcon className={`w-6 h-6 ${isDarkTheme ? 'text-white' : 'text-black'}`} />
         </button>
       </div>
       <SparklesCore
